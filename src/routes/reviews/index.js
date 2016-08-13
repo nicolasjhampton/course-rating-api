@@ -1,6 +1,7 @@
 'use strict';
 
-var router = require('express').router;
+var express = require('express');
+var router = express.Router();
 
 var del = require('./delete.js');
 var post = require('./post.js');

@@ -1,6 +1,7 @@
 'use strict';
 
-var router = require('express').router;
+var express = require('express');
+var router = express.Router();
 
 var users = require('./users');
 var courses = require('./courses');

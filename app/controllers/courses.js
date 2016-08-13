@@ -6,7 +6,7 @@ function CoursesController(dataService, errorHandlerService, sessionService, $lo
 
   _this.courses = [];
   _this.userIsAuthenticated = sessionService.currentUser.isAuthenticated;
-  
+
   dataService.getCourses().then(
     function(response) {
       var courses = response.data.data;
