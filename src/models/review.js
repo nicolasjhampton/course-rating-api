@@ -9,9 +9,13 @@ var ReviewSchema = new Schema({
           ref: 'User'
         },
   postedOn: Date,
-  rating: Number,
-  review: String,
-  materialsNeeded: String
+  rating: {
+            type: Number,
+            required: [true, "A rating is required"],
+            min: [1, "Rating must be between 1 and 5"],
+            max: [5, "Rating must be between 1 and 5"]
+          },
+  review: String
 });
 
 var Review = mongoose.model("Review", ReviewSchema);
