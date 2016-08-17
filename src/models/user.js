@@ -13,7 +13,13 @@ var UserSchema = new Schema({
   emailAddress: {
                   type: String,
                   required: [true, "An email is required"],
-                  unique: true
+                  unique: true,
+                  validate: {
+                    validator: function(value) {
+                      return /[a-z0-9-_.]+@[a-z0-9-_]+.[a-z]+/i.test(value);
+                    },
+                    message: 'Please use a proper email address'
+                  }
                 },
   password: {
               type: String,
@@ -25,14 +31,27 @@ var UserSchema = new Schema({
                    }
 });
 
+UserSchema.pre('validate', function(next) {
+  var user = this;
+  if(user.password.indexOf(user.confirmPassword) == -1) {
+    var err = new Error('Passwords don\'t match');
+    return next(err);
+  } else {
+    return next();
+  }
+});
+
 UserSchema.pre('save', function(next) {
   var user = this;
   bcrypt.genSalt(10, function(err, salt) {
     bcrypt.hash(user.password, salt, function(err, hash) {
       if(err) return next(err);
       user.password = hash;
-      user.confirmPassword = hash;
-      return next();
+      bcrypt.hash(user.confirmPassword, salt, function(err2, hash2) {
+        if(err2) return next(err2);
+        user.confirmPassword = hash2;
+        return next();
+      });
     });
   });
 });
@@ -41,20 +60,13 @@ UserSchema.statics.authenticate = function(req, callback) {
   var credentials = auth(req);
   this.findOne({ emailAddress: credentials.name })
       .exec(function(err, user) {
-        console.log(user);
-        bcrypt.compare(credentials.pass, user.password, function(err, authorization){
-          console.log(authorization);
-          return callback(authorization, user);
+        if(err) return callback(err, false);
+        bcrypt.compare(credentials.pass, user.password, function(err2, authorization){
+          if(err2) return callback(err2, false, user);
+          return callback(err2, authorization, user);
         });
       });
-}
-
-// UserSchema.methods.comparePass = function(password, callback) {
-//   var user = this;
-//   bcrypt.compare(password, user.hashedPassword, function(err, match){
-//     return callback(err, match);
-//   });
-// };
+};
 
 var User = mongoose.model("User", UserSchema);
 

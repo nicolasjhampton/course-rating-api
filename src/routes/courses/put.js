@@ -1,8 +1,10 @@
 'use strict';
 
 module.exports = function(req, res, next) {
-  var course = Object.assign(req.course, req.body);
+  // PUT /api/courses/:id 204 - Updates a course and returns no content
+  var course = Object.assign(req.course.toObject(), req.body);
   course.save(function(err) {
-    return res.json({data: [course]});
+    if(err) return next(err);
+    return next();
   });
 };

@@ -6,7 +6,8 @@ module.exports = function(req, res, next) {
   Course.find({})
         .select('_id title')
         .exec(function(err, data) {
-          console.log(data);
+          if(err) return next(err);
+
           return res.json({data: data});
         });
 };

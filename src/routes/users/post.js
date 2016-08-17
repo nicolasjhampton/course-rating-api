@@ -14,7 +14,7 @@ module.exports = function(req, res, next) {
 
    // create authorization header
    var authString = btoa(req.body.emailAddress + ':' + req.body.password);
-   req.headers['Authorization'] = 'Basic ' + authString;
+   req.headers['authorization'] = 'Basic ' + authString;
 
    // goto main page
    return next();

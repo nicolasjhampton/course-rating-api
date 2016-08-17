@@ -8,7 +8,7 @@ var ReviewSchema = new Schema({
           type: Schema.Types.ObjectId,
           ref: 'User'
         },
-  postedOn: Date,
+  postedOn: { type: Date, default: Date.now },
   rating: {
             type: Number,
             required: [true, "A rating is required"],

@@ -22,20 +22,24 @@ var CourseSchema = new Schema({
   reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }]
 });
 
+CourseSchema.pre('save', function(next) {
+  this.steps.forEach(function(current, index) {
+    current.stepNumber = index + 1;
+  });
+  return next();
+});
+
 CourseSchema.path('steps').validate(function(steps) {
   return !(!steps || steps.length === 0);
 }, "At least one step is required");
 
 CourseSchema.virtual('overallRating').get(function() {
-  console.log('this');
   var total = this.reviews.reduce(function(previous, current) {
     return previous += current.rating;
   }, 0);
   return Math.ceil(total / this.reviews.length);
 });
 
-// CourseSchema.set('toJSON', { getters: false });
-// CourseSchema.set('toObject', { getters: false });
 
 var Course = mongoose.model("Course", CourseSchema);
 

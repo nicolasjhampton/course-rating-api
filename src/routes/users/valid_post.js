@@ -11,11 +11,11 @@ module.exports = function(req, res, next) {
      req.body.confirmPassword) {
 
     // Check if passwords match
-    if(req.body.confirmPassword == req.body.password) {
+    // if(req.body.confirmPassword == req.body.password) {
       return next();
-    } else {
-      return errHandle(next, 'Passwords don\'t match', 400);
-    }
+    // } else {
+    //   return errHandle(next, 'Passwords don\'t match', 400);
+    // }
 
   } else {
     return errHandle(next, 'Please fill all fields', 400);
