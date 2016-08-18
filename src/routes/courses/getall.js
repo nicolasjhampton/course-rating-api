@@ -8,6 +8,7 @@ module.exports = function(req, res, next) {
         .exec(function(err, data) {
           if(err) return next(err);
 
-          return res.json({data: data});
+          return res.status(200)
+                    .json({ data: data });
         });
 };

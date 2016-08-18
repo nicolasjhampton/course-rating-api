@@ -27,19 +27,13 @@ var UserSchema = new Schema({
             },
   confirmPassword: {
                      type: String,
-                     required: [true, "A password is required"]
+                     required: [true, "The password must be confirmed"]
                    }
 });
 
-UserSchema.pre('validate', function(next) {
-  var user = this;
-  if(user.password.indexOf(user.confirmPassword) == -1) {
-    var err = new Error('Passwords don\'t match');
-    return next(err);
-  } else {
-    return next();
-  }
-});
+UserSchema.path('confirmPassword').validate(function(value) {
+  return this.password.indexOf(value) !== -1;
+}, "Passwords don\'t match");
 
 UserSchema.pre('save', function(next) {
   var user = this;
@@ -60,6 +54,7 @@ UserSchema.statics.authenticate = function(req, callback) {
   var credentials = auth(req);
   this.findOne({ emailAddress: credentials.name })
       .exec(function(err, user) {
+        if(!user) return handleError(callback, 'AuthenticationError', 'A user with specified email was not found', 'AuthenticationError');
         if(err) return callback(err, false);
         bcrypt.compare(credentials.pass, user.password, function(err2, authorization){
           if(err2) return callback(err2, false, user);
@@ -67,6 +62,17 @@ UserSchema.statics.authenticate = function(req, callback) {
         });
       });
 };
+
+function handleError(callback, type, message, property) {
+  var err = new Error();
+  err.status = 400;
+  err.message = type;
+  err.errors = {};
+  err.errors[property] = [
+    { "code": 400 , "message": message }
+  ];
+  return callback(err, false);
+}
 
 var User = mongoose.model("User", UserSchema);
 

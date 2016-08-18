@@ -12,13 +12,11 @@ var post = require('./post.js');
 var put = require('./put.js');
 
 router.param('courseId', id);
-router.get('/', getAll);
-// POST /api/courses 201 - Creates a course, sets the Location header, and returns no content
-router.post('/', authorize, post, getAll);
 
+router.get('/', getAll);
+router.post('/', authorize, post);
 router.get('/:courseId', get);
-// PUT /api/courses/:id 204 - Updates a course and returns no content
-router.put('/:courseId', authorize, put, getAll);
+router.put('/:courseId', authorize, put);
 
 
 module.exports = router;

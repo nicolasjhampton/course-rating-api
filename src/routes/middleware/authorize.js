@@ -1,6 +1,5 @@
 'use strict';
 
-var errHandle = require('../error-handler.js');
 var User = require('../../models/user.js');
 
 module.exports = function(req, res, next) {
@@ -8,9 +7,18 @@ module.exports = function(req, res, next) {
     if (err) return next(err);
     if(authorization) {
       req.user = user;
+      req.body.user = req.user._id;
       return next();
     } else {
-      return errHandle(next, 'Authentication error', 400);
+      var err = new Error();
+      err.status = 400;
+      err.message = 'AuthenticationError';
+      err.errors = {
+        "user": [
+          { "code": 400 , "message": 'Invalid password or username' }
+         ]
+       };
+      return next(err);
     }
   });
 }

@@ -11,12 +11,8 @@ var models = require('./models');
 var mockData = require('./data/data.json');
 
 var routes = require('./routes');
-var errHandle = require('./routes/error-handler.js');
 
 var app = express();
-var User = models.User;
-var Review = models.Review;
-var Course = models.Course;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -33,13 +29,39 @@ app.use('/', express.static('public'));
 app.use('/api', routes);
 
 app.use(function(req, res, next) {
-  return errHandle(next, 'Not Found', 404);
+  var err = new Error();
+  err.status = 404;
+  err.message = 'Not Found';
+  return next(err);
 });
 
 app.use(function(err, req, res, next) {
-  res.status = err.status || 500;
+  // Add a global error handler middleware function 
+  // that writes error information to the response
+  // in the JSON format.
+  // {
+  //   "message": "Validation Failed",
+  //   "errors": {
+  //     "property": [
+  //       { "code": "", "message": "" },
+  //       ... ]
+  //     }
+  //   }
   console.log(err);
-  return res.json(err);
+  var status;
+  switch(err.name) {
+    case 'ValidationError':
+      status = 400;
+      break;
+    case 'CastError':
+      status = 500;
+      break;
+    default:
+      status = 404;
+      break;
+  }
+  res.status(status);
+  res.json(err);
 });
 
 mongoose.connect('mongodb://localhost:27017/sandbox');

@@ -9,9 +9,9 @@ module.exports = function(req, res, next) {
     req.course.reviews.push(review._id);
     req.course.save(function(err) {
       if(err) return next(err);
-      res.location('#/detail/' + req.course._id);
-      return res.send();
+      return res.status(201)
+                .location('api/course/' + req.course._id)
+                .send();
     });
-
   });
 };
