@@ -2,6 +2,10 @@
 
 var User = require('../../models/user.js');
 
+// Update all routes that require authentication to
+// check for the current user and return a 401 HTTP
+// status code if not available.
+
 module.exports = function(req, res, next) {
   User.authenticate(req, function(err, authorization, user) {
     if (err) return next(err);
@@ -11,11 +15,11 @@ module.exports = function(req, res, next) {
       return next();
     } else {
       var err = new Error();
-      err.status = 400;
+      err.status = 401;
       err.message = 'AuthenticationError';
       err.errors = {
         "user": [
-          { "code": 400 , "message": 'Invalid password or username' }
+          { "code": 401 , "message": 'Invalid password or username' }
          ]
        };
       return next(err);

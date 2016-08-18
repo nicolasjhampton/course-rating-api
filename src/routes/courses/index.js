@@ -11,6 +11,15 @@ var get = require('./get.js');
 var post = require('./post.js');
 var put = require('./put.js');
 
+// Don't allow anyone other than the current user to add/edit courses.
+// Confusing duplicate instruction, as we already require authenication
+// for those routes in
+// The following routes should require authentication:
+// POST /api/courses
+// PUT /api/courses/:id
+// Do you mean to say that only the user that created the course
+// can edit (PUT) the course?
+
 router.param('courseId', id);
 
 router.get('/', getAll);

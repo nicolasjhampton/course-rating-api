@@ -16,7 +16,7 @@ var UserSchema = new Schema({
                   unique: true,
                   validate: {
                     validator: function(value) {
-                      return /[a-z0-9-_.]+@[a-z0-9-_]+.[a-z]+/i.test(value);
+                      return /[a-z0-9-_.]+@[a-z0-9-_]+.[a-z.]+/i.test(value);
                     },
                     message: 'Please use a proper email address'
                   }
@@ -36,7 +36,13 @@ UserSchema.path('confirmPassword').validate(function(value) {
 }, "Passwords don\'t match");
 
 UserSchema.pre('save', function(next) {
+
   var user = this;
+
+  // Make sure all email addresses are in lowercase, trimmed format
+  user.emailAddress = user.emailAddress.toLowerCase().trim();
+
+  // Hash passwords
   bcrypt.genSalt(10, function(err, salt) {
     bcrypt.hash(user.password, salt, function(err, hash) {
       if(err) return next(err);
@@ -57,7 +63,7 @@ UserSchema.statics.authenticate = function(req, callback) {
         if(!user) return handleError(callback, 'AuthenticationError', 'A user with specified email was not found', 'AuthenticationError');
         if(err) return callback(err, false);
         bcrypt.compare(credentials.pass, user.password, function(err2, authorization){
-          if(err2) return callback(err2, false, user);
+          if(err2) return callback(err2, false);
           return callback(err2, authorization, user);
         });
       });

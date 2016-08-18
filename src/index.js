@@ -36,17 +36,23 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(err, req, res, next) {
-  // Add a global error handler middleware function 
-  // that writes error information to the response
-  // in the JSON format.
+  // Update the POST and PUT routes to return Mongoose validation errors.
+  // The response should use the 400 status code.
+  // In order for the AngularJS application to be able to display your
+  // validation errors, convert the Mongoose validation errors into the
+  // following JSON data structure:
   // {
   //   "message": "Validation Failed",
   //   "errors": {
   //     "property": [
   //       { "code": "", "message": "" },
-  //       ... ]
-  //     }
+  //       ...
+  //     ]
   //   }
+  // }
+  // The mongoose validation errors already have all these properties in
+  // this format. Does this mean we want to eliminate the stack trace from
+  // the error that's sent?
   console.log(err);
   var status;
   switch(err.name) {
