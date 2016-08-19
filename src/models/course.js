@@ -30,6 +30,10 @@ CourseSchema.pre('save', function(next) {
   return next();
 });
 
+
+// This makes sure that a user can't review their own project
+// in the instructions, this is extra credit, but it states this
+// should be on the review schema
 CourseSchema.path('reviews').validate(function(reviews, callback) {
   var valid = true;
   var course = this;
@@ -42,7 +46,7 @@ CourseSchema.path('reviews').validate(function(reviews, callback) {
             counter++;
 
             if(!reviewObj || !course.user._id) return callback(true);
-            
+
             var reviewId = reviewObj.user._id;
 
             if(reviewId.toString() !== course.user._id.toString() && valid == true) {
