@@ -1,13 +1,15 @@
 'use strict';
 
 var User = require('../../models/user.js');
+var auth = require('basic-auth');
 
 // Update all routes that require authentication to
 // check for the current user and return a 401 HTTP
 // status code if not available.
 
 module.exports = function(req, res, next) {
-  User.authenticate(req, function(err, authorization, user) {
+  var credentials = auth(req);
+  User.authenticate(credentials, function(err, authorization, user) {
     if (err) return next(err);
     if(authorization) {
       req.user = user;

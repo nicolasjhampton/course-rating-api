@@ -23,7 +23,13 @@ router.delete('/', function(req, res, next) {
   return res.status(403).json({ message: "Cannot delete a collection of reviews"});
 });
 
-// Also include an Allow header with the value DELETE
+// Also include an Allow header with the value GET,PUT
+var allowHeaders = function(req, res, next) {
+    res.header('Access-Control-Allow-Methods', 'DELETE');
+    next();
+}
+
+router.all('/:reviewId', allowHeaders);
 router.delete('/:reviewId', del);
 
 // exceeds

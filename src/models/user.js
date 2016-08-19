@@ -3,7 +3,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
-var auth = require('basic-auth');
 
 var UserSchema = new Schema({
   fullName: {
@@ -60,6 +59,10 @@ UserSchema.path('confirmPassword').validate(function(value) {
   return this.password.indexOf(value) !== -1;
 }, "Passwords don\'t match");
 
+UserSchema.path('password').validate(function(value) {
+  return /^[a-zA-Z0-9_\-.!@#$%^&*()]{7,}$/.test(value);
+}, "Passwords must be at least 7 letters and numbers");
+
 UserSchema.pre('save', function(next) {
 
   var user = this;
@@ -81,8 +84,7 @@ UserSchema.pre('save', function(next) {
   });
 });
 
-UserSchema.statics.authenticate = function(req, callback) {
-  var credentials = auth(req);
+UserSchema.statics.authenticate = function(credentials, callback) {
   this.findOne({ emailAddress: credentials.name })
       .exec(function(err, user) {
         if(!user) return handleError(callback, 'AuthenticationError', 'A user with specified email was not found', 'AuthenticationError');
