@@ -85,6 +85,8 @@ UserSchema.pre('save', function(next) {
 });
 
 UserSchema.statics.authenticate = function(credentials, callback) {
+  console.log(credentials);
+  if(!credentials) return callback(null, false);
   this.findOne({ emailAddress: credentials.name })
       .exec(function(err, user) {
         if(!user) return handleError(callback, 'AuthenticationError', 'A user with specified email was not found', 'AuthenticationError');
