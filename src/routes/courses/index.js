@@ -39,11 +39,11 @@ router.delete('/', function(req, res, next) {
 var allowHeaders = function(req, res, next) {
     res.header('Access-Control-Allow-Methods', 'GET,PUT');
     next();
-}
+};
 
 router.all('/:courseId', allowHeaders);
 router.get('/:courseId', get);
-router.put('/:courseId', authorize, put)
+router.put('/:courseId', authorize, put);
 
 // exceeds
 router.post('/:courseId', function(req, res, next) {

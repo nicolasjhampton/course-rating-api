@@ -12,7 +12,9 @@ var UserSchema = new Schema({
   emailAddress: {
                   type: String,
                   required: [true, "An email is required"],
-                  unique: true,
+                  lowercase: true,
+                  trim: true,
+                  unique: [true, "Email address is already being used"],
                   validate: {
                     validator: function(value) {
                       return /[a-z0-9-_.]+@[a-z0-9-_]+.[a-z.]+/i.test(value);
@@ -85,15 +87,13 @@ UserSchema.pre('save', function(next) {
 });
 
 UserSchema.statics.authenticate = function(credentials, callback) {
-  console.log(credentials);
   if(!credentials) return callback(null, false);
   this.findOne({ emailAddress: credentials.name })
       .exec(function(err, user) {
-        if(!user) return handleError(callback, 'AuthenticationError', 'A user with specified email was not found', 'AuthenticationError');
-        if(err) return callback(err, false);
+        if(!user || err) return callback(null, false);
         bcrypt.compare(credentials.pass, user.password, function(err2, authorization){
-          if(err2) return callback(err2, false);
-          return callback(err2, authorization, user);
+          if(err2) return callback(null, false);
+          return callback(null, authorization, user);
         });
       });
 };

@@ -16,7 +16,14 @@ module.exports = function(req, res, next) {
       });
     });
   } else {
-    var err = new Error('Unauthorized request');
+    var err = new Error();
+    err.status = 401;
+    err.message = 'UnauthorizedRequest';
+    err.errors = {
+      "user": [
+        { "code": 401 , "message": 'Review and course do not belong to the current user' }
+       ]
+     };
     return next(err);
   }
 };
