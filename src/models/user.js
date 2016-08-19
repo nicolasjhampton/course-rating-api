@@ -31,6 +31,31 @@ var UserSchema = new Schema({
                    }
 });
 
+// Just came across something talking to patrickm:
+// User
+// _id (ObjectId, auto-generated)
+// fullName (String)
+// emailAddress (String)
+// hashedPassword (String)
+
+// ^ those are the instructions for our User model
+
+//User
+// Must have a fullName value
+// Must have an emailAddress value
+// Must have a password value
+// Must have a confirmPassword value
+// The password and confirmPassword values must match
+// The provided emailAddress is in the correct format
+// The provided emailAddress must not be associated with an existing user
+
+// ^ These are the required validations
+// This seems to imply that we need a virtual or two for the
+// password and confirmPassword properties.
+
+// Is this on purpose? The instructions never actually state the need
+// for password and confirmPassword to be virtual.
+
 UserSchema.path('confirmPassword').validate(function(value) {
   return this.password.indexOf(value) !== -1;
 }, "Passwords don\'t match");
