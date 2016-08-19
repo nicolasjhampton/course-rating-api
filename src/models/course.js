@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
+var Review = require('./review.js');
 var Schema = mongoose.Schema;
 
 var StepSchema = new Schema({
@@ -32,6 +33,7 @@ CourseSchema.pre('save', function(next) {
 CourseSchema.path('steps').validate(function(steps) {
   return !(!steps || steps.length === 0);
 }, "At least one step is required");
+
 
 CourseSchema.virtual('overallRating').get(function() {
   var total = this.reviews.reduce(function(previous, current) {

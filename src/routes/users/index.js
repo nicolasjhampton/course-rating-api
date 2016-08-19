@@ -19,5 +19,13 @@ var allCourses = require('../courses/getall.js');
 router.post('/', post);
 router.get('/', authorize, get);
 
+// exceeds expectations
+router.put('/', function(req, res, next) {
+  return res.status(403).json({ message: "Cannot edit a collection of users"});
+});
+
+router.delete('/', function(req, res, next) {
+  return res.status(403).json({ message: "Cannot delete a collection of users"});
+});
 
 module.exports = router;

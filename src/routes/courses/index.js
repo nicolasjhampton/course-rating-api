@@ -24,8 +24,27 @@ router.param('courseId', id);
 
 router.get('/', getAll);
 router.post('/', authorize, post);
-router.get('/:courseId', get);
-router.put('/:courseId', authorize, put);
 
+// exceeds
+router.put('/', function(req, res, next) {
+  return res.status(403).json({ message: "Cannot edit a collection of courses"});
+});
+
+router.delete('/', function(req, res, next) {
+  return res.status(403).json({ message: "Cannot delete a collection of courses"});
+});
+
+// Also include an Allow header with the value GET,PUT
+router.get('/:courseId', get);
+router.put('/:courseId', authorize, put)
+
+// exceeds
+router.post('/:courseId', function(req, res, next) {
+  return res.status(405).json({ message: "Use the '/api/courses' route to create a course"});
+});
+
+router.post('/:courseId', function(req, res, next) {
+  return res.status(403).json({ message: "Cannot delete a course"});
+});
 
 module.exports = router;
